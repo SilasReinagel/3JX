@@ -1,7 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import * as THREE from 'three';
-  import { loadFbx } from '../ThreeJsCore/Loaders';
+  import { loadFbx, loadTexture } from '../ThreeJsCore/Loaders';
   import { createOrbitControls } from '../ThreeJsCore/ThreeJsControls';
 
   let camera, scene, renderer;
@@ -17,12 +17,15 @@
   const init = () => {
     camera = new THREE.PerspectiveCamera(70, getWindowAspect(), 0.01, 100);
     camera.position.z = 5;
+    camera.position.y = 2;
 
     scene = new THREE.Scene();
 
     renderer = new THREE.WebGLRenderer({ antialias: true, canvas: canvas });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setAnimationLoop(animate);
+
+    controls = createOrbitControls(camera, renderer);
 
     loadFbx('./assets/models/Car.fbx', m => {
       console.log(m);
@@ -33,7 +36,7 @@
     const light = new THREE.AmbientLight(0xffffff, 5); // soft white light
     scene.add(light);
 
-    controls = createOrbitControls(camera, renderer);
+    loadTexture('./assets/textures/gradient-01.jpg', t => scene.background = t);
   }
 
   const onWindowResize = () => {
