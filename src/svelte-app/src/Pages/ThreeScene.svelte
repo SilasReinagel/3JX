@@ -1,34 +1,39 @@
 <script>
   import { onMount } from 'svelte';
   import * as THREE from 'three';
+  import { loadFbx } from '../ThreeJsCore/Loaders';
+  import { createOrbitControls } from '../ThreeJsCore/ThreeJsControls';
 
   let camera, scene, renderer;
-  let geometry, material, mesh;
-  let canvas;
+  let canvas, controls;
 
   const getWindowAspect = () => window.innerWidth / window.innerHeight;
 
-  const animation = (time) => {
-    mesh.rotation.x = time / 2000;
-    mesh.rotation.y = time / 1000;
-
+  const animate = (time) => {
+    controls.update();
     renderer.render( scene, camera );
   }
 
   const init = () => {
     camera = new THREE.PerspectiveCamera(70, getWindowAspect(), 0.01, 100);
-    camera.position.z = 1;
+    camera.position.z = 5;
 
     scene = new THREE.Scene();
 
-    geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
-    material = new THREE.MeshNormalMaterial();
-    mesh = new THREE.Mesh(geometry, material);
-    scene.add(mesh);
-
     renderer = new THREE.WebGLRenderer({ antialias: true, canvas: canvas });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setAnimationLoop( animation );
+    renderer.setAnimationLoop(animate);
+
+    loadFbx('./assets/models/Car.fbx', m => {
+      console.log(m);
+      m.position.set(0,0,0);
+      scene.add(m)
+    });
+
+    const light = new THREE.AmbientLight(0xffffff, 5); // soft white light
+    scene.add(light);
+
+    controls = createOrbitControls(camera, renderer);
   }
 
   const onWindowResize = () => {
