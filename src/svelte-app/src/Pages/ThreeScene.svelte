@@ -3,6 +3,7 @@
   import * as THREE from 'three';
   import { loadFbx, loadTexture } from '../ThreeJsCore/Loaders';
   import { createOrbitControls } from '../ThreeJsCore/ThreeJsControls';
+  import EnableFullScreen from '../ThreeJsCore/EnableFullscreen';
 
   let camera, scene, renderer;
   let canvas, controls;
@@ -22,28 +23,29 @@
     scene = new THREE.Scene();
 
     renderer = new THREE.WebGLRenderer({ antialias: true, canvas: canvas });
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0xffffff);
     renderer.setAnimationLoop(animate);
+    updateSize();
+
+    EnableFullScreen(canvas);
 
     controls = createOrbitControls(camera, renderer);
 
-    loadFbx('./assets/models/Car.fbx', m => {
-      console.log(m);
-      m.position.set(0,0,0);
-      scene.add(m)
-    });
+    loadFbx('./assets/models/Car.fbx', m => scene.add(m));
 
-    const light = new THREE.AmbientLight(0xffffff, 5); // soft white light
-    scene.add(light);
+    scene.add(new THREE.AmbientLight(0xffffff, 5));
 
-    loadTexture('./assets/textures/gradient-01.jpg', t => scene.background = t);
+    //loadTexture('./assets/textures/gradient-01.jpg', t => scene.background = t);
   }
 
-  const onWindowResize = () => {
+  const onWindowResize = () => updateSize();
+
+  const updateSize = () => {
     camera.aspect = getWindowAspect();
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-  };
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  }
   
   onMount(() => {
     init();
