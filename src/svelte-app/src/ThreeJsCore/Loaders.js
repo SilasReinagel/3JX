@@ -1,12 +1,23 @@
 import * as THREE from 'three';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
+import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
+
+const debugLoggingEnabled = false;
+const logInfo = (msg) => {
+  if (debugLoggingEnabled)
+    console.log(msg);
+}
+
+const logError = (msg) => {
+  console.error(msg);
+}
 
 export const loadFbx = (path, onLoaded) => 
   new FBXLoader().load(
     path,
     (object) => { onLoaded(object); },
-    (xhr) => { console.log((xhr.loaded / xhr.total) * 100 + '% loaded') },
-    (error) => { console.log(error) }
+    (xhr) => { logInfo((xhr.loaded / xhr.total) * 100 + '% loaded') },
+    (error) => { logError(error) }
   );
 
 export const loadTexture = (path, onLoaded) => 
@@ -14,5 +25,15 @@ export const loadTexture = (path, onLoaded) =>
     path,
     (texture) => onLoaded(texture),
     undefined,
-    (error) => { console.log(error) }
+    (error) => { logError(error) }
+  );
+
+export const loadTextureAsync = (path) => new THREE.TextureLoader().loadAsync(path);
+
+export const loadHdr = (path, onLoaded) => 
+  new RGBELoader().load(
+    path,
+    (texture) => onLoaded(texture),
+    undefined,
+    (error) => { logError(error) }
   );
