@@ -4,10 +4,29 @@
   import * as THREE from 'three';
   import { loadFbx, loadTexture } from '../ThreeJsCore/Loaders';
   import { createOrbitControls } from '../ThreeJsCore/ThreeJsControls';
-  import EnableFullScreen from '../ThreeJsCore/EnableFullscreen';
+  import EnableFullScreen from '../ThreeJsCore/EnableFullscreen';  
+  import * as dat from 'dat.gui'
 
   let camera, scene, renderer;
   let canvas, controls;
+  let gui;
+  let ambientLight;
+
+  const config = {
+    backgroundColor: 0xffffff,
+    ambientLightIntensity: 5,
+  }
+
+  const initGui = () => {
+    gui = new dat.GUI({ closeOnTop: true, closed: true });
+    gui.addColor(config, 'backgroundColor')
+      .onChange(() => renderer.setClearColor(config.backgroundColor));
+    gui.add(config, 'ambientLightIntensity')
+      .min(0)
+      .max(20)
+      .step(0.1)
+      .onChange(() => ambientLight.intensity = config.ambientLightIntensity);
+  }
 
   const getWindowAspect = () => window.innerWidth / window.innerHeight;
 
@@ -18,13 +37,12 @@
 
   const init = () => {
     camera = new THREE.PerspectiveCamera(70, getWindowAspect(), 0.01, 100);
-    camera.position.z = 5;
-    camera.position.y = 2;
+    camera.position.set(3,3,3);
 
     scene = new THREE.Scene();
 
     renderer = new THREE.WebGLRenderer({ antialias: true, canvas: canvas });
-    renderer.setClearColor(0xffffff);
+    renderer.setClearColor(config.backgroundColor);
     renderer.setAnimationLoop(animate);
     updateSize();
 
@@ -34,7 +52,8 @@
 
     loadFbx('./assets/models/Car.fbx', m => scene.add(m));
 
-    scene.add(new THREE.AmbientLight(0xffffff, 5));
+    ambientLight = new THREE.AmbientLight(0xffffff, 5);
+    scene.add(ambientLight);
   }
 
   const onWindowResize = () => updateSize();
@@ -48,8 +67,13 @@
   
   onMount(() => {
     init();
+    initGui();
 		window.addEventListener('resize', onWindowResize);
-		return () => window.removeEventListener('resize', onResize);
+		return () => { 
+      if (gui)
+        gui.destroy();
+      window.removeEventListener('resize', onResize);
+    }
 	});
 </script>
 

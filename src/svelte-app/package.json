@@ -21,6 +21,7 @@
     "svelte-preprocess": "^4.7.3"
   },
   "dependencies": {
+    "dat.gui": "^0.7.7",
     "sirv-cli": "^1.0.0",
     "three": "^0.133.1",
     "three-stdlib": "^2.5.4"
