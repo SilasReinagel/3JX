@@ -1,16 +1,33 @@
 <script>
   import Container from '../Elements/Container.svelte';
+  import PageLayout from '../Layout/PageLayout.svelte';
+  import { pages } from '../static-content';
 
 </script>
 
-<Container>
-  <section>
-    <h1>Home</h1>
-  </section>
-</Container>
+<PageLayout>
+  <Container>
+    <section>
+      <div class="column">
+        {#each pages.filter(x => x.isScene) as page}
+          <a href={page.href}>{page.name}</a>
+        {/each}
+      </div>
+    </section>
+  </Container>
+</PageLayout>
 
 <style>
   section {
     padding: 1em;
+  }
+
+  .column {
+    display: flex;
+    flex-direction: column;
+  }
+
+  a {
+    margin: 6px;
   }
 </style>

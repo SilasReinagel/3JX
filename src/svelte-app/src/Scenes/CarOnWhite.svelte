@@ -1,5 +1,6 @@
 <script>
   import { onMount } from 'svelte';
+  import SceneLayout from '../Layout/SceneLayout.svelte';
   import * as THREE from 'three';
   import { loadFbx, loadTexture } from '../ThreeJsCore/Loaders';
   import { createOrbitControls } from '../ThreeJsCore/ThreeJsControls';
@@ -34,8 +35,6 @@
     loadFbx('./assets/models/Car.fbx', m => scene.add(m));
 
     scene.add(new THREE.AmbientLight(0xffffff, 5));
-
-    //loadTexture('./assets/textures/gradient-01.jpg', t => scene.background = t);
   }
 
   const onWindowResize = () => updateSize();
@@ -54,7 +53,9 @@
 	});
 </script>
 
-<canvas bind:this={canvas}></canvas>
+<SceneLayout>
+  <canvas bind:this={canvas}></canvas>
+</SceneLayout>
 
 <style>
   canvas {
