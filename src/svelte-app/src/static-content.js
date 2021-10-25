@@ -3,13 +3,15 @@ import Contact from './Pages/Contact.svelte';
 import CarOnWhite from './Scenes/CarOnWhite.svelte';
 import CarWithSky from './Scenes/CarWithSky.svelte';
 import Taycan from './Scenes/Taycan.svelte';
+import CarWithReflectiveFloor1  from './Scenes/CarWithReflectiveFloor1.svelte';
 
-const DefaultPage = Home;
+export const DefaultPage = Home;
 export const pages = [
   { path: '/', href: '/', name: 'Home', component: DefaultPage, showInMainNav: false },
   { path: '/carOnWhite', href: '/index.html?page=carOnWhite', name: 'CarOnWhite', component: CarOnWhite, showInMainNav: false, isScene: true },
   { path: '/carWithSky', href: '/index.html?page=carWithSky', name: 'CarWithSky', component: CarWithSky, showInMainNav: false, isScene: true },
   { path: '/taycan', href: '/index.html?page=taycan', name: 'Taycan', component: Taycan, showInMainNav: false, isScene: true },
+  { path: '/carWithReflectiveFloor1', href: '/index.html?page=carWithReflectiveFloor1', name: 'CarWithReflectiveFloor1', component: CarWithReflectiveFloor1, showInMainNav: false, isScene: true },
   { path: '/contact', href: '/index.html?page=contact', name: 'Contact', component: Contact, showInMainNav: false },
 ]
 
