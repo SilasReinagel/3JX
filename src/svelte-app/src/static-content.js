@@ -6,16 +6,16 @@ import Taycan from './Scenes/Taycan.svelte';
 
 const DefaultPage = Home;
 export const pages = [
-  { path: '/', href: '/', name: 'Home', component: DefaultPage, showInMainNav: true },
-  { path: '/carOnWhite', href: '/index.html?page=carOnWhite', name: 'CarOnWhite', component: CarOnWhite, showInMainNav: true, isScene: true },
-  { path: '/carWithSky', href: '/index.html?page=carWithSky', name: 'CarWithSky', component: CarWithSky, showInMainNav: true, isScene: true },
-  { path: '/taycan', href: '/index.html?page=taycan', name: 'Taycan', component: Taycan, showInMainNav: true, isScene: true },
+  { path: '/', href: '/', name: 'Home', component: DefaultPage, showInMainNav: false },
+  { path: '/carOnWhite', href: '/index.html?page=carOnWhite', name: 'CarOnWhite', component: CarOnWhite, showInMainNav: false, isScene: true },
+  { path: '/carWithSky', href: '/index.html?page=carWithSky', name: 'CarWithSky', component: CarWithSky, showInMainNav: false, isScene: true },
+  { path: '/taycan', href: '/index.html?page=taycan', name: 'Taycan', component: Taycan, showInMainNav: false, isScene: true },
   { path: '/contact', href: '/index.html?page=contact', name: 'Contact', component: Contact, showInMainNav: false },
 ]
 
 const address = (line1, city, state, zip5, mapLink) => ({ line1, city, state, zip5, mapLink, toString: () => `${line1}, ${city}, ${state}, ${zip5}`});
 export const site = ({
-    name: 'Three JS Gallery',
+    name: 'Three JS Examples Gallery',
     owner: 'Silas Reinagel',
     slogan: 'Interesting visuals exploration!',
     email: 'silas.reinagel@gmail.com',

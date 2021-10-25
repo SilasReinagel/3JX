@@ -8,9 +8,14 @@
 <PageLayout>
   <Container>
     <section>
-      <div class="column">
+      <div class="layout center-vh">
         {#each pages.filter(x => x.isScene) as page}
-          <a href={page.href}>{page.name}</a>
+          <a href={page.href}>
+            <!-- <h1>{page.name}</h1> -->
+            <div class="img-box">
+              <img src="./assets/preview/{page.name}.jpg" alt="{page.name} Preview Image"/>
+            </div>
+          </a>            
         {/each}
       </div>
     </section>
@@ -22,12 +27,25 @@
     padding: 1em;
   }
 
-  .column {
+  .layout {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
   }
 
   a {
     margin: 6px;
+  }
+
+  .img-box {
+    width: 480px;
+    max-width: 92vw;
+    height: 360px;
+    overflow: hidden;
+  }
+
+  h1 {
+    margin-left: auto;
+    margin-right: auto;
   }
 </style>

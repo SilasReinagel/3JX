@@ -16,7 +16,7 @@
   </a>
   <SiteSidebar bind:open={sidebarOpen}/>
   <nav class="navbar tablet-hidden">
-    {#each pages as page}
+    {#each pages.filter(p => p.showInMainNav) as page}
       <a class="navlink decor-font" href={page.href}>{page.name}</a>
     {/each}
   </nav>
