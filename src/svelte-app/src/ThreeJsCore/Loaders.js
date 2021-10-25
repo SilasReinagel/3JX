@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
+import { DRACOLoader } from 'three-stdlib';
 
 const debugLoggingEnabled = false;
 const logInfo = (msg) => {
@@ -28,6 +29,19 @@ export const loadTexture = (path, onLoaded) =>
     (error) => { logError(error) }
   );
 
+export const loadTextures = (paths, onLoaded) => {
+  let textures;
+  const getTextures = () => new Promise((resolve, reject)=>{
+    const manager = new THREE.LoadingManager(()=>resolve(paths));
+    const loader = new THREE.TextureLoader(manager);
+    textures = paths.map(filename => loader.load(filename));
+    return textures;
+  });
+  
+  getTextures()
+    .then(r => onLoaded(textures));  
+}
+
 export const loadTextureAsync = (path) => new THREE.TextureLoader().loadAsync(path);
 
 export const loadHdr = (path, onLoaded) => 
@@ -37,3 +51,6 @@ export const loadHdr = (path, onLoaded) =>
     undefined,
     (error) => { logError(error) }
   );
+
+export const loadGltf = (path, onLoaded) => 
+    new DRACOLoader().loadGltf(path, onLoaded);

@@ -2,12 +2,14 @@ import Home from './Pages/Home.svelte';
 import Contact from './Pages/Contact.svelte';
 import CarOnWhite from './Scenes/CarOnWhite.svelte';
 import CarWithSky from './Scenes/CarWithSky.svelte';
+import Taycan from './Scenes/Taycan.svelte';
 
 const DefaultPage = Home;
 export const pages = [
   { path: '/', href: '/', name: 'Home', component: DefaultPage, showInMainNav: true },
   { path: '/carOnWhite', href: '/index.html?page=carOnWhite', name: 'CarOnWhite', component: CarOnWhite, showInMainNav: true, isScene: true },
   { path: '/carWithSky', href: '/index.html?page=carWithSky', name: 'CarWithSky', component: CarWithSky, showInMainNav: true, isScene: true },
+  { path: '/taycan', href: '/index.html?page=taycan', name: 'Taycan', component: Taycan, showInMainNav: true, isScene: true },
   { path: '/contact', href: '/index.html?page=contact', name: 'Contact', component: Contact, showInMainNav: false },
 ]
 
