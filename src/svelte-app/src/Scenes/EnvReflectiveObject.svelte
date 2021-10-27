@@ -13,6 +13,7 @@
   let loaded = false;
   let camera, scene, renderer;
   let canvas, controls;
+  let envMap;
   let reflectionObjects = [];
   let needsReflectionUpdate = true;
   let mainObj;
