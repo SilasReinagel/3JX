@@ -6,6 +6,7 @@ import Taycan from './Scenes/Taycan.svelte';
 import CarWithReflectiveFloor1  from './Scenes/CarWithReflectiveFloor1.svelte';
 import EnvReflectiveObject from './Scenes/EnvReflectiveObject.svelte';
 import BasicReflector from './Scenes/FloorMirror.svelte';
+import SciFiCity from './Scenes/SciFiCity.svelte';
 
 export const DefaultPage = Home;
 
@@ -18,7 +19,8 @@ export const pages = [
   { path: '/taycan', href: '/index.html?page=taycan', name: 'Taycan', component: Taycan, showInMainNav: false, isScene: true },
   { path: '/carWithReflectiveFloor1', href: '/index.html?page=carWithReflectiveFloor1', name: 'CarWithReflectiveFloor1', component: CarWithReflectiveFloor1, showInMainNav: false, isScene: true },
   // { path: '/EnvReflectiveObject', href: '/index.html?page=envReflectiveObject', name: 'EnvReflectiveObject', component: EnvReflectiveObject, showInMainNav: false, isScene: true },
-  makeScene('reflector', BasicReflector)
+  makeScene('reflector', BasicReflector),
+  makeScene('futureCity', SciFiCity),
 ]
 
 const address = (line1, city, state, zip5, mapLink) => ({ line1, city, state, zip5, mapLink, toString: () => `${line1}, ${city}, ${state}, ${zip5}`});

@@ -1,7 +1,9 @@
 <script>
   export let init;
   export let config = ({});
+  export let loaded = false;
   export let animate = () => {};
+  export let dispose = () => {};
   export let createGui = () => undefined;
   export let createCamera = () => undefined;
   export let createControls = () => undefined;
@@ -9,6 +11,7 @@
 
   import { onMount } from 'svelte';
   import SceneLayout from '../Layout/SceneLayout.svelte';
+  import LoaderVisual from '../Elements/Loader.svelte';
   import * as THREE from 'three';
   import { createOrbitControls } from '../ThreeJsCore/ThreeJsControls';
   import EnableFullScreen from '../ThreeJsCore/EnableFullscreen';  
@@ -21,8 +24,12 @@
   const getWindowAspect = () => window.innerWidth / window.innerHeight;
 
   const render = () => {
-    animate();
-    controls.update();
+    if (!loaded)
+      return;
+      
+    animate({ scene, camera, renderer });
+    if (controls)
+      controls.update();
     renderer.render(scene, camera);
   }
 
@@ -53,6 +60,7 @@
 
     gui = createGui({ camera, scene, renderer });
     init({ camera, scene, renderer });
+    loaded = true;
   }
 
   const onWindowResize = () => {
@@ -74,6 +82,7 @@
       if (gui)
         gui.destroy();
       window.removeEventListener('resize', onResize);
+      dispose();
     }
 	});
 </script>
@@ -81,6 +90,10 @@
 <SceneLayout>
   <canvas bind:this={canvas}></canvas>
 </SceneLayout>
+
+{#if !loaded}
+  <LoaderVisual/>
+{/if}
 
 <style>
   canvas {
