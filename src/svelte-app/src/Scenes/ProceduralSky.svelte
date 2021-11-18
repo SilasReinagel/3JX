@@ -13,10 +13,10 @@
 
   const config = {
     turbidity: 6.7,
-    rayleigh: 4.5,
+    rayleigh: 1.2,
     mieCoefficient: 0.005,
-    mieDirectionalG: 0.88,
-    elevation: 50,
+    mieDirectionalG: 0.84,
+    elevation: 42,
     azimuth: 26,
     exposure: 1
   };
