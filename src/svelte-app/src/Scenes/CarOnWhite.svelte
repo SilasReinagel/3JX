@@ -30,7 +30,9 @@
   }
 
   const init = ({ scene }) => {
-    loadFbx('./assets/models/Car.fbx', m => scene.add(m));
+    loadFbx('./assets/models/Car.fbx', m => {
+      scene.add(m);
+    });
 
     ambientLight = new THREE.AmbientLight(0xffffff, 5);
     scene.add(ambientLight);

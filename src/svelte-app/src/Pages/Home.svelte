@@ -3,13 +3,14 @@
   import PageLayout from '../Layout/PageLayout.svelte';
   import { pages } from '../static-content';
 
+  const reversedPages = pages.reverse();
 </script>
 
 <PageLayout>
   <Container>
     <section>
       <div class="layout center-vh">
-        {#each pages.filter(x => x.isScene) as page}
+        {#each reversedPages.filter(x => x.isScene) as page}
           <a href={page.href}>
             <!-- <h1>{page.name}</h1> -->
             <div class="img-box">

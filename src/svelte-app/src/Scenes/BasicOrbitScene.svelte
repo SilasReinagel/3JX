@@ -4,10 +4,11 @@
   export let loaded = false;
   export let animate = () => {};
   export let dispose = () => {};
-  export let createGui = () => undefined;
-  export let createCamera = () => undefined;
-  export let createControls = () => undefined;
+  export let createGui = undefined;
+  export let createCamera = undefined;
+  export let createControls = undefined;
   export let afterWindowResize = () => {};
+  export let orbitTarget = undefined;
 
   import { onMount } from 'svelte';
   import SceneLayout from '../Layout/SceneLayout.svelte';
@@ -26,7 +27,7 @@
   const render = () => {
     if (!loaded)
       return;
-      
+    
     animate({ scene, camera, renderer });
     if (controls)
       controls.update();
@@ -34,10 +35,9 @@
   }
 
   const setupCamera = () => {
-    if (createCamera)
+    if (createCamera) {
       camera = createCamera();
-    else
-    {
+    } else {
       camera = new THREE.PerspectiveCamera(70, getWindowAspect(), 0.01, 100);
       camera.position.set(3,3,3);
     }
@@ -53,10 +53,13 @@
 
     EnableFullScreen(canvas);
 
-    if (createControls)
+    if (createControls) {
       controls = createControls({ camera, renderer });
-    else
+    } else {
       controls = createOrbitControls(camera, renderer);
+      if (orbitTarget)
+        controls.target = orbitTarget;
+    }
 
     gui = createGui({ camera, scene, renderer });
     init({ camera, scene, renderer });
