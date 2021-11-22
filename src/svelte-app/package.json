@@ -25,6 +25,7 @@
     "gsap": "^3.8.0",
     "sirv-cli": "^1.0.0",
     "three": "^0.133.1",
-    "three-stdlib": "^2.5.4"
+    "three-stdlib": "^2.5.4",
+    "three.terrain.js": "^2.0.0"
   }
 }

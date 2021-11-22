@@ -10,6 +10,7 @@ import SciFiCity from './Scenes/SciFiCity.svelte';
 import FloorWithLightmap from './Scenes/FloorWithLightmap.svelte';
 import ProceduralSky from './Scenes/ProceduralSky.svelte';
 import Ocean from './Scenes/Ocean.svelte';
+import DesertSunShadows from './Scenes/DesertSunShadows.svelte';
 
 export const DefaultPage = Home;
 
@@ -27,6 +28,7 @@ export const pages = [
   //makeScene('floorWithLightMap', FloorWithLightmap),
   makeScene('proceduralSky', ProceduralSky),
   makeScene('ocean', Ocean),
+  makeScene('desertSunShadows', DesertSunShadows),
 ]
 
 const address = (line1, city, state, zip5, mapLink) => ({ line1, city, state, zip5, mapLink, toString: () => `${line1}, ${city}, ${state}, ${zip5}`});
