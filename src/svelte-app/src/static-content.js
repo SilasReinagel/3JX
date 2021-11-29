@@ -11,6 +11,9 @@ import FloorWithLightmap from './Scenes/FloorWithLightmap.svelte';
 import ProceduralSky from './Scenes/ProceduralSky.svelte';
 import Ocean from './Scenes/Ocean.svelte';
 import DesertSunShadows from './Scenes/DesertSunShadows.svelte';
+import Terrain from './Scenes/Terrain.svelte';
+import RoomWithAmbientOcculsion from './Scenes/RoomWithAmbientOcculsion.svelte';
+import DepthPano from './Scenes/DepthPano.svelte';
 
 export const DefaultPage = Home;
 
@@ -29,6 +32,9 @@ export const pages = [
   makeScene('proceduralSky', ProceduralSky),
   makeScene('ocean', Ocean),
   makeScene('desertSunShadows', DesertSunShadows),
+  //makeScene('terrain', Terrain),
+  //makeScene('roomWithAmbientOcclusion', RoomWithAmbientOcculsion),
+  makeScene('depthPano', DepthPano),
 ]
 
 const address = (line1, city, state, zip5, mapLink) => ({ line1, city, state, zip5, mapLink, toString: () => `${line1}, ${city}, ${state}, ${zip5}`});
