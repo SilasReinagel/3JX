@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
-import { DRACOLoader } from 'three-stdlib';
+import { GLTFLoader, DRACOLoader } from 'three-stdlib';
 
 const debugLoggingEnabled = false;
 const logInfo = (msg) => {
@@ -52,5 +52,10 @@ export const loadHdr = (path, onLoaded) =>
     (error) => { logError(error) }
   );
 
-export const loadGltf = (path, onLoaded) => 
-    new DRACOLoader().loadGltf(path, onLoaded);
+export const loadGltf = (path, onLoaded) => {
+  const loader = new GLTFLoader();
+  const dracoLoader = new DRACOLoader();
+  dracoLoader.setDecoderPath('/three/examples/js/libs/draco/');
+  loader.setDRACOLoader(dracoLoader);
+  loader.load(path, onLoaded);
+}

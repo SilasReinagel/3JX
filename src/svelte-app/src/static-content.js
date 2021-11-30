@@ -14,6 +14,7 @@ import DesertSunShadows from './Scenes/DesertSunShadows.svelte';
 import Terrain from './Scenes/Terrain.svelte';
 import RoomWithAmbientOcculsion from './Scenes/RoomWithAmbientOcculsion.svelte';
 import DepthPano from './Scenes/DepthPano.svelte';
+import SciFiApartment from './Scenes/SciFiApartment.svelte';
 
 export const DefaultPage = Home;
 
@@ -26,7 +27,8 @@ export const pages = [
   { path: '/taycan', href: '/index.html?page=taycan', name: 'Taycan', component: Taycan, showInMainNav: false, isScene: true },
   { path: '/carWithReflectiveFloor1', href: '/index.html?page=carWithReflectiveFloor1', name: 'CarWithReflectiveFloor1', component: CarWithReflectiveFloor1, showInMainNav: false, isScene: true },
   // { path: '/EnvReflectiveObject', href: '/index.html?page=envReflectiveObject', name: 'EnvReflectiveObject', component: EnvReflectiveObject, showInMainNav: false, isScene: true },
-  makeScene('Planar Reflector', 'reflector', BasicReflector),
+  makeScene('Planar Reflector', 'reflector', BasicReflector),  
+  makeScene('SciFi Apartment', 'sciFiApartment', SciFiApartment),
   makeScene('Future City', 'futureCity', SciFiCity),
   //makeScene('floorWithLightMap', FloorWithLightmap),
   makeScene('Procedural Sky', 'proceduralSky', ProceduralSky),
