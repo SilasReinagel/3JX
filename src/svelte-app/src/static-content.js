@@ -17,7 +17,7 @@ import DepthPano from './Scenes/DepthPano.svelte';
 
 export const DefaultPage = Home;
 
-const makeScene = (pageName, component) => ({ path: `/${pageName}`, name: pageName, href:`/index.html?page=${pageName}`, component, showInMainNav: false, isScene: true });
+const makeScene = (title, pageName, component) => ({ title, path: `/${pageName}`, name: pageName, href:`/index.html?page=${pageName}`, component, showInMainNav: false, isScene: true });
 export const pages = [
   { path: '/', href: '/', name: 'Home', component: DefaultPage, showInMainNav: false },
   { path: '/contact', href: '/index.html?page=contact', name: 'Contact', component: Contact, showInMainNav: false },
@@ -26,15 +26,15 @@ export const pages = [
   { path: '/taycan', href: '/index.html?page=taycan', name: 'Taycan', component: Taycan, showInMainNav: false, isScene: true },
   { path: '/carWithReflectiveFloor1', href: '/index.html?page=carWithReflectiveFloor1', name: 'CarWithReflectiveFloor1', component: CarWithReflectiveFloor1, showInMainNav: false, isScene: true },
   // { path: '/EnvReflectiveObject', href: '/index.html?page=envReflectiveObject', name: 'EnvReflectiveObject', component: EnvReflectiveObject, showInMainNav: false, isScene: true },
-  makeScene('reflector', BasicReflector),
-  makeScene('futureCity', SciFiCity),
+  makeScene('Planar Reflector', 'reflector', BasicReflector),
+  makeScene('Future City', 'futureCity', SciFiCity),
   //makeScene('floorWithLightMap', FloorWithLightmap),
-  makeScene('proceduralSky', ProceduralSky),
-  makeScene('ocean', Ocean),
-  makeScene('desertSunShadows', DesertSunShadows),
+  makeScene('Procedural Sky', 'proceduralSky', ProceduralSky),
+  makeScene('Ocean', 'ocean', Ocean),
+  makeScene('Direction Light + Shadows', 'desertSunShadows', DesertSunShadows),
   //makeScene('terrain', Terrain),
   //makeScene('roomWithAmbientOcclusion', RoomWithAmbientOcculsion),
-  makeScene('depthPano', DepthPano),
+  makeScene('Depth Panorama', 'depthPano', DepthPano),
 ]
 
 const address = (line1, city, state, zip5, mapLink) => ({ line1, city, state, zip5, mapLink, toString: () => `${line1}, ${city}, ${state}, ${zip5}`});
