@@ -28,7 +28,6 @@ export const pages = [
   { path: '/carWithReflectiveFloor1', href: '/index.html?page=carWithReflectiveFloor1', name: 'CarWithReflectiveFloor1', component: CarWithReflectiveFloor1, showInMainNav: false, isScene: true },
   // { path: '/EnvReflectiveObject', href: '/index.html?page=envReflectiveObject', name: 'EnvReflectiveObject', component: EnvReflectiveObject, showInMainNav: false, isScene: true },
   makeScene('Planar Reflector', 'reflector', BasicReflector),  
-  makeScene('SciFi Apartment', 'sciFiApartment', SciFiApartment),
   makeScene('Future City', 'futureCity', SciFiCity),
   //makeScene('floorWithLightMap', FloorWithLightmap),
   makeScene('Procedural Sky', 'proceduralSky', ProceduralSky),
@@ -37,6 +36,7 @@ export const pages = [
   //makeScene('terrain', Terrain),
   //makeScene('roomWithAmbientOcclusion', RoomWithAmbientOcculsion),
   makeScene('Depth Panorama', 'depthPano', DepthPano),
+  makeScene('SciFi Apartment', 'sciFiApartment', SciFiApartment),
 ]
 
 const address = (line1, city, state, zip5, mapLink) => ({ line1, city, state, zip5, mapLink, toString: () => `${line1}, ${city}, ${state}, ${zip5}`});

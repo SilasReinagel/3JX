@@ -7,6 +7,7 @@
   export let createGui = undefined;
   export let createCamera = undefined;
   export let createControls = undefined;
+  export let createRenderer = undefined;
   export let afterWindowResize = () => {};
   export let orbitTarget = undefined;
 
@@ -61,8 +62,10 @@
         controls.target = orbitTarget;
     }
 
-    gui = createGui({ camera, scene, renderer });
-    init({ camera, scene, renderer });
+    const initParams = init({ camera, scene, renderer });
+    gui = createGui({ camera, scene, renderer, ...initParams });
+    if (createRenderer)
+      renderer = createRenderer();
     loaded = true;
   }
 
