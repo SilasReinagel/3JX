@@ -4,17 +4,20 @@
   import BasicOrbitScene from './BasicOrbitScene.svelte';
   import { loadFbx } from '../ThreeJsCore/Loaders';
 
-  let ambientLight;
-var cardtemplate = "https://raw.githubusercontent.com/pizza3/asset/master/cardtemplate3.png";
-var cardtemplateback = "https://raw.githubusercontent.com/pizza3/asset/master/cardtemplateback4.png";
-var flower = "https://raw.githubusercontent.com/pizza3/asset/master/flower3.png";
-var noise2 = "https://raw.githubusercontent.com/pizza3/asset/master/noise2.png";
-var color11 = "https://raw.githubusercontent.com/pizza3/asset/master/color11.png";
-var backtexture = "https://raw.githubusercontent.com/pizza3/asset/master/color3.jpg";
-var skullmodel = "https://raw.githubusercontent.com/pizza3/asset/master/skull5.obj";
-var voronoi = "https://raw.githubusercontent.com/pizza3/asset/master/rgbnoise2.png";
+  let frontmaterial, frontcard;
+  let backmaterial, backcard;
 
-const vert = `
+  const assetPath = "./assets/textures/shiny-card-01"
+  const assetTex = t => `${assetPath}/${t}`;
+
+  const cardtemplate = assetTex('cardbackmask.png');
+  const cardtemplateback = assetTex('cardbackmask.png');
+  const cardBackDecor = assetTex('cardbackdecor-02.png');
+  const cardColor = assetTex('cardcolorpalette.png');
+  const noise2 = assetTex('noise.png');
+  const backtexture = assetTex('cardshinepattern-03.png');
+  const voronoi = assetTex('noise.png');
+const vertShader = `
   varying vec2 vUv;
   varying vec3 camPos;
   varying vec3 eyeVector;
@@ -32,7 +35,7 @@ const vert = `
 
 const fragPlane = `
 	varying vec2 vUv;
-  uniform sampler2D skullrender;
+  uniform sampler2D objrender;
   uniform sampler2D cardtemplate;
   uniform sampler2D backtexture;
   uniform sampler2D noiseTex;
@@ -50,12 +53,12 @@ const fragPlane = `
   void main() {
     vec2 uv = gl_FragCoord.xy/resolution.xy ;
     vec4 temptex = texture2D( cardtemplate, vUv);
-    vec4 skulltex = texture2D( skullrender, uv - 0.5 );
+    vec4 objtex = texture2D( objrender, uv - 0.5 );
     gl_FragColor = temptex;
     float f = Fresnel(eyeVector, vNormal);
     vec4 noisetex = texture2D( noise, mod(vUv*2.,1.));
     if(gl_FragColor.g >= .5 && gl_FragColor.r < 0.6){
-      gl_FragColor = f + skulltex;
+      gl_FragColor = f + objtex;
       gl_FragColor += noisetex/5.;
 
     } else {
@@ -78,7 +81,6 @@ const fragPlane = `
       gl_FragColor *= colortex;
       gl_FragColor += vec4(sin((tone + vUv.x + vUv.y/10.)*10.))/8.;
       // gl_FragColor += vec4(108.0)*result;
-
     }
 
     gl_FragColor.a = temptex.a;
@@ -87,7 +89,7 @@ const fragPlane = `
 
 const fragPlaneback = `
 	varying vec2 vUv;
-  uniform sampler2D skullrender;
+  uniform sampler2D objrender;
   uniform sampler2D cardtemplate;
   uniform sampler2D backtexture;
   uniform sampler2D noiseTex;
@@ -105,7 +107,7 @@ const fragPlaneback = `
   void main() {
     vec2 uv = gl_FragCoord.xy/resolution.xy ;
     vec4 temptex = texture2D( cardtemplate, vUv);
-    vec4 skulltex = texture2D( skullrender, vUv );
+    vec4 objtex = texture2D( objrender, vUv );
     gl_FragColor = temptex;
     vec4 noisetex = texture2D( noise, mod(vUv*2.,1.));
     float f = Fresnel(eyeVector, vNormal);
@@ -127,9 +129,9 @@ const fragPlaneback = `
     float tone = pow(dot(normalize(camPos), normalize(bactex.rgb)), 1.);
     vec4 colortex = texture2D( color, vec2(tone,0.));
     if(gl_FragColor.g >= .5 && gl_FragColor.r < 0.6){
-      float tone = pow(dot(normalize(camPos), normalize(skulltex.rgb)), 1.);
+      float tone = pow(dot(normalize(camPos), normalize(objtex.rgb)), 1.);
       vec4 colortex2 = texture2D( color, vec2(tone,0.));
-      if(skulltex.a > 0.2){
+      if(objtex.a > 0.2){
         gl_FragColor = colortex;
         // gl_FragColor += vec4(108.0)*result;
         // gl_FragColor += vec4(sin((tone + vUv.x + vUv.y/10.)*10.))/8.;
@@ -147,7 +149,7 @@ const fragPlaneback = `
 
   }
 `;
-const vertskull = `
+const vertobj = `
       varying vec3 vNormal;
       varying vec3 camPos;
       varying vec3 vPosition;
@@ -164,7 +166,7 @@ const vertskull = `
         gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
       }
 `;
-const fragskull = `
+const fragobj = `
       #define NUM_OCTAVES 5
       uniform vec4 resolution;
       varying vec3 vNormal;
@@ -237,7 +239,6 @@ const fragskull = `
         vec2 uv = gl_FragCoord.xy/resolution.xy ; 
         //  uv = normalize( vNormal ).xy ; 
 
-
         vec3 newCam = vec3(0.,5.,10.);
         float gradient = dot(.0 -  normalize( newCam ), normalize( vNormal )) ;
 
@@ -248,11 +249,8 @@ const fragskull = `
         vec3 color = vec3(noise) + gradient;
         vec3 color2 = color - 0.2;
 
-
         float noisetone = setOpacity(color.r,color.g,color.b);
         float noisetone2 = setOpacity(color2.r,color2.g,color2.b);
-
-
 
         vec4 backColor = vec4(color, 1.);
         backColor.rgb = rgbcol(color0.r,color0.g,color0.b)*noisetone;
@@ -278,26 +276,23 @@ const fragskull = `
     ambientLightIntensity: 5,
   }
 
+  const simpleImageCard = (img) => {
+    var geometry = new THREE.PlaneGeometry(20, 30);
+    var mat = new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load(img), color: new THREE.Color() });
+    return new THREE.Mesh(geometry, mat);
+  }
+
   const createCard = () => {
     var geometry = new THREE.PlaneGeometry(20, 30);
     frontmaterial = new THREE.ShaderMaterial({
       uniforms: {
-        cardtemplate: {
-          type: "t",
-          value: new THREE.TextureLoader().load(cardtemplate),
-        },
-        backtexture: {
-          type: "t",
-          value: new THREE.TextureLoader().load(backtexture),
-        },
-        noise: {
-          type: "t",
-          value: new THREE.TextureLoader().load(noise2),
-        },
-        skullrender: {
-          type: "t",
-          value: composer.readBuffer.texture,
-        },
+        cardtemplate: { type: "t", value: new THREE.TextureLoader().load(cardtemplate), },
+        backtexture: { type: "t", value: new THREE.TextureLoader().load(backtexture), },
+        noise: { type: "t", value: new THREE.TextureLoader().load(noise2), },
+        // objrender: {
+        //   type: "t",
+        //   value: composer.readBuffer.texture,
+        // },
         resolution: {
           value: new THREE.Vector2(1301 / 2, window.innerHeight),
         },
@@ -307,11 +302,55 @@ const fragskull = `
         },
         color: {
           type: "t",
-          value: new THREE.TextureLoader().load(color11),
+          value: new THREE.TextureLoader().load(cardColor),
         },
       },
       fragmentShader: fragPlane,
-      vertexShader: vert,
+      vertexShader: vertShader,
+      transparent: true,
+      depthWrite: false,
+    });
+
+    frontcard = new THREE.Mesh(geometry, frontmaterial);
+    return frontcard;
+  }
+
+  const createCardBack = () => {
+    var geometry = new THREE.PlaneGeometry(20, 30);
+    backmaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        cardtemplate: { type: "t", value: new THREE.TextureLoader().load(cardtemplateback), },
+        backtexture: { type: "t", value: new THREE.TextureLoader().load(backtexture), },
+        noise: { type: "t", value: new THREE.TextureLoader().load(noise2), },
+        objrender: { type: "t", value: new THREE.TextureLoader().load(cardBackDecor), },
+        resolution: { value: new THREE.Vector2(1301 / 2, window.innerHeight), },
+        noiseTex: { type: "t", value: new THREE.TextureLoader().load(voronoi), },
+        color: { type: "t", value: new THREE.TextureLoader().load(cardColor), },
+      },
+      fragmentShader: fragPlaneback,
+      vertexShader: vertShader,
+      transparent: true,
+      depthWrite: false,
+    });
+    backcard = new THREE.Mesh(geometry, backmaterial);
+    backcard.rotation.set(0, Math.PI, 0);
+    return backcard;
+  }
+
+  const createImgCardFront = (img) => {
+    var geometry = new THREE.PlaneGeometry(20, 30);
+    frontmaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        cardtemplate: { type: "t", value: new THREE.TextureLoader().load(cardtemplate), },
+        backtexture: { type: "t", value: new THREE.TextureLoader().load(backtexture), },
+        noise: { type: "t", value: new THREE.TextureLoader().load(noise2), },
+        objrender: { type: "t", value: new THREE.TextureLoader().load(img), },
+        resolution: { value: new THREE.Vector2(1301 / 2, window.innerHeight), },
+        noiseTex: { type: "t", value: new THREE.TextureLoader().load(voronoi), },
+        color: { type: "t", value: new THREE.TextureLoader().load(cardColor), },
+      },
+      fragmentShader: fragPlaneback,
+      vertexShader: vertShader,
       transparent: true,
       depthWrite: false,
     });
@@ -333,8 +372,10 @@ const fragskull = `
   }
 
   const init = ({ scene }) => {
-    const card = createCard();
-    scene.add(card);
+    scene.background = new THREE.Color(0, 0, 0);
+    scene.add(createImgCardFront('https://picsum.photos/200/300'));
+    //scene.add(simpleImageCard('https://picsum.photos/200/300'));
+    scene.add(createCardBack());
   };
 </script>
 
