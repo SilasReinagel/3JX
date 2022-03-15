@@ -15,10 +15,14 @@ import Terrain from './Scenes/Terrain.svelte';
 import RoomWithAmbientOcculsion from './Scenes/RoomWithAmbientOcculsion.svelte';
 import DepthPano from './Scenes/DepthPano.svelte';
 import SciFiApartment from './Scenes/SciFiApartment.svelte';
+import ShinyCard from './Scenes/ShinyCard.svelte';
+import TiledTexture from './Scenes/TiledTexture.svelte';
+import InfiniteTiledSlideshow from './Scenes/InfiniteTiledSlideshow.svelte';
 
 export const DefaultPage = Home;
 
 const makeScene = (title, pageName, component) => ({ title, path: `/${pageName}`, name: pageName, href:`/index.html?page=${pageName}`, component, showInMainNav: false, isScene: true });
+
 export const pages = [
   { path: '/', href: '/', name: 'Home', component: DefaultPage, showInMainNav: false },
   { path: '/contact', href: '/index.html?page=contact', name: 'Contact', component: Contact, showInMainNav: false },
@@ -37,6 +41,8 @@ export const pages = [
   //makeScene('roomWithAmbientOcclusion', RoomWithAmbientOcculsion),
   makeScene('Depth Panorama', 'depthPano', DepthPano),
   makeScene('SciFi Apartment', 'sciFiApartment', SciFiApartment),
+  //makeScene('Tiled Texture', 'tiledTexture', TiledTexture),
+  makeScene('Infinite Tiled Sildeshow', 'infiniteTiledSlideshow', InfiniteTiledSlideshow),
 ]
 
 const address = (line1, city, state, zip5, mapLink) => ({ line1, city, state, zip5, mapLink, toString: () => `${line1}, ${city}, ${state}, ${zip5}`});

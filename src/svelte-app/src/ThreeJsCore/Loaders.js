@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
+import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { GLTFLoader, DRACOLoader } from 'three-stdlib';
 
 const debugLoggingEnabled = false;
@@ -15,6 +16,14 @@ const logError = (msg) => {
 
 export const loadFbx = (path, onLoaded) => 
   new FBXLoader().load(
+    path,
+    (object) => { onLoaded(object); },
+    (xhr) => { logInfo((xhr.loaded / xhr.total) * 100 + '% loaded') },
+    (error) => { logError(error) }
+  );
+
+export const loadObj = (path, onLoaded) => 
+  new OBJLoader().load(
     path,
     (object) => { onLoaded(object); },
     (xhr) => { logInfo((xhr.loaded / xhr.total) * 100 + '% loaded') },
