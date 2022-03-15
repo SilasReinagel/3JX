@@ -16,6 +16,8 @@ import RoomWithAmbientOcculsion from './Scenes/RoomWithAmbientOcculsion.svelte';
 import DepthPano from './Scenes/DepthPano.svelte';
 import SciFiApartment from './Scenes/SciFiApartment.svelte';
 import ShinyCard from './Scenes/ShinyCard.svelte';
+import TiledTexture from './Scenes/TiledTexture.svelte';
+import InfiniteTiledSlideshow from './Scenes/InfiniteTiledSlideshow.svelte';
 
 export const DefaultPage = Home;
 
@@ -39,7 +41,8 @@ export const pages = [
   //makeScene('roomWithAmbientOcclusion', RoomWithAmbientOcculsion),
   makeScene('Depth Panorama', 'depthPano', DepthPano),
   makeScene('SciFi Apartment', 'sciFiApartment', SciFiApartment),
-  makeScene('Shiny Card', 'shinyCard', ShinyCard),
+  //makeScene('Tiled Texture', 'tiledTexture', TiledTexture),
+  makeScene('Infinite Tiled Sildeshow', 'infiniteTiledSlideshow', InfiniteTiledSlideshow),
 ]
 
 const address = (line1, city, state, zip5, mapLink) => ({ line1, city, state, zip5, mapLink, toString: () => `${line1}, ${city}, ${state}, ${zip5}`});

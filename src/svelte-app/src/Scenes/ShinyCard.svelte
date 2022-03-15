@@ -2,10 +2,22 @@
   import * as THREE from 'three';
   import * as dat from 'dat.gui';
   import BasicOrbitScene from './BasicOrbitScene.svelte';
-  import { loadFbx } from '../ThreeJsCore/Loaders';
+  import { loadFbx, loadObj } from '../ThreeJsCore/Loaders';
+
+  import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+  import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
+  import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 
   let frontmaterial, frontcard;
   let backmaterial, backcard;
+  let cameraRTT, sceneRTT;
+  let composer;
+  let bloomPass;
+  let camera;
+  let modelGroup;
+  let textureRTT;
+  let debugMat;
+  let obj;
 
   const assetPath = "./assets/textures/shiny-card-01"
   const assetTex = t => `${assetPath}/${t}`;
@@ -14,9 +26,10 @@
   const cardtemplateback = assetTex('cardbackmask.png');
   const cardBackDecor = assetTex('cardbackdecor-02.png');
   const cardColor = assetTex('cardcolorpalette.png');
-  const noise2 = assetTex('noise.png');
+  const noise2 = assetTex('noise2.png');
   const backtexture = assetTex('cardshinepattern-03.png');
   const voronoi = assetTex('noise.png');
+
 const vertShader = `
   varying vec2 vUv;
   varying vec3 camPos;
@@ -274,6 +287,30 @@ const fragobj = `
   const config = {
     backgroundColor: 0xffffff,
     ambientLightIntensity: 5,
+    x: 0,
+    y: 0,
+    z: 0,
+  }
+
+  const initGui = ({ renderer }) => {
+    const gui = new dat.GUI({ closeOnTop: true, closed: true });
+    gui.add(config, 'x')
+      .min(-100)
+      .max(100)
+      .step(0.1)
+      .onChange(() => obj.position.x = config.x);
+    gui.add(config, 'y')
+      .min(-100)
+      .max(100)
+      .step(0.1)
+      .onChange(() => obj.position.y = config.y);
+    gui.add(config, 'z')
+      .min(-100)
+      .max(100)
+      .step(0.1)
+      .onChange(() => obj.position.z = config.z);
+    gui.close();
+    return gui;
   }
 
   const simpleImageCard = (img) => {
@@ -282,28 +319,17 @@ const fragobj = `
     return new THREE.Mesh(geometry, mat);
   }
 
-  const createCard = () => {
+  const createCard = (resolution) => {
     var geometry = new THREE.PlaneGeometry(20, 30);
     frontmaterial = new THREE.ShaderMaterial({
       uniforms: {
         cardtemplate: { type: "t", value: new THREE.TextureLoader().load(cardtemplate), },
         backtexture: { type: "t", value: new THREE.TextureLoader().load(backtexture), },
-        noise: { type: "t", value: new THREE.TextureLoader().load(noise2), },
-        // objrender: {
-        //   type: "t",
-        //   value: composer.readBuffer.texture,
-        // },
-        resolution: {
-          value: new THREE.Vector2(1301 / 2, window.innerHeight),
-        },
-        noiseTex: {
-          type: "t",
-          value: new THREE.TextureLoader().load(voronoi),
-        },
-        color: {
-          type: "t",
-          value: new THREE.TextureLoader().load(cardColor),
-        },
+        //noise: { type: "t", value: new THREE.TextureLoader().load(noise2), },
+        objrender: { type: "t", value: composer.readBuffer.texture, },
+        resolution: { value: new THREE.Vector2(1301, composer.readBuffer.texture.image.height), },
+        noiseTex: { type: "t", value: new THREE.TextureLoader().load(voronoi), },
+        color: { type: "t", value: new THREE.TextureLoader().load(cardColor), },
       },
       fragmentShader: fragPlane,
       vertexShader: vertShader,
@@ -360,23 +386,63 @@ const fragobj = `
   }
 
   const createCamera = () => {
-    const camera = new THREE.PerspectiveCamera(30, 1301 / 2 / window.innerHeight, 1, 10000);
+    camera = new THREE.PerspectiveCamera(30, 1301 / 2 / window.innerHeight, 1, 10000);
     camera.position.z = 100;
     return camera;
   }
 
-  const initGui = ({ renderer }) => {
-    const gui = new dat.GUI({ closeOnTop: true, closed: true });
-    gui.close();
-    return gui;
-  }
+  const init = ({ scene, renderer }) => {
+    sceneRTT = new THREE.Scene();
+    modelGroup = new THREE.Object3D();    
+    cameraRTT = new THREE.PerspectiveCamera(30, 1301 / 2 / window.innerHeight, 1, 10000);
+    cameraRTT.position.z = 30;
+    cameraRTT.position.y = -3.5;
+    
+    modelGroup.add(new THREE.Mesh(
+      new THREE.SphereBufferGeometry(50), 
+      new THREE.MeshMatcapMaterial({ color: new THREE.Color(0.1, 0, 0.1), side: THREE.BackSide }))
+    );
+    loadFbx('./assets/models/Car.fbx', m => {
+      m.position.set(config.x, config.y, config.z);
+      modelGroup.add(m);
+      obj = m;
+    });
+    // const cubeGeo = new THREE.SphereBufferGeometry(1);
+    // const cubeMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(255, 255, 255) });
+    // const cubeMesh = new THREE.Mesh(cubeGeo, cubeMat);
+    // cubeMesh.position.set(0, -10, 0);
+    // modelGroup.add(cubeMesh);
 
-  const init = ({ scene }) => {
+    textureRTT = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, 
+      {
+       minFilter: THREE.LinearFilter, 
+       magFilter: THREE.NearestFilter
+      });
+
+    composer = new EffectComposer(renderer);  
+    composer.renderToScreen = false;
+    composer.addPass(new RenderPass(sceneRTT, cameraRTT));
+    sceneRTT.add(new THREE.AmbientLight(0xffffff, 5));
+    sceneRTT.add(modelGroup);
+
     scene.background = new THREE.Color(0, 0, 0);
-    scene.add(createImgCardFront('https://picsum.photos/200/300'));
-    //scene.add(simpleImageCard('https://picsum.photos/200/300'));
+    scene.add(createCard(new THREE.Vector2(renderer.width, renderer.height)));
     scene.add(createCardBack());
+
+    debugMat = new THREE.MeshBasicMaterial();
+    debugMat.map = composer.readBuffer.texture;
+    const debugPlane = new THREE.Mesh(new THREE.PlaneBufferGeometry(20, 30), debugMat);
+    debugPlane.position.set(24, 0, 1);
+    scene.add(debugPlane); 
   };
+
+  const onFrame = ({ renderer }) => {
+    if (modelGroup && camera)
+      modelGroup.rotation.set(-camera.rotation._x, -camera.rotation._y, 0);
+
+    //renderer.render(sceneRTT, cameraRTT, textureRTT, true);
+    composer.render();
+  }
 </script>
 
-<BasicOrbitScene config={config} createGui={initGui} init={init} createCamera={createCamera}/>
+<BasicOrbitScene config={config} createGui={initGui} init={init} createCamera={createCamera} onFrame={onFrame} />

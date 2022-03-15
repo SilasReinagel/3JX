@@ -4,12 +4,14 @@
   export let loaded = false;
   export let animate = () => {};
   export let dispose = () => {};
+  export let onFrame = () => {};
   export let createGui = undefined;
   export let createCamera = undefined;
   export let createControls = undefined;
   export let createRenderer = undefined;
   export let afterWindowResize = () => {};
   export let orbitTarget = undefined;
+  export let showControls = true;
 
   import { onMount } from 'svelte';
   import SceneLayout from '../Layout/SceneLayout.svelte';
@@ -22,6 +24,7 @@
   let camera, renderer;
   let canvas, controls;
   let gui;
+  let clock = new THREE.Clock();
 
   const getWindowAspect = () => window.innerWidth / window.innerHeight;
 
@@ -29,9 +32,10 @@
     if (!loaded)
       return;
     
-    animate({ scene, camera, renderer });
+    animate({ scene, camera, renderer, clock });
     if (controls)
       controls.update();
+    onFrame({ scene, camera, renderer });
     renderer.render(scene, camera);
   }
 
@@ -63,7 +67,8 @@
     }
 
     const initParams = init({ camera, scene, renderer });
-    gui = createGui({ camera, scene, renderer, ...initParams });
+    if (showControls)
+      gui = createGui({ camera, scene, renderer, ...initParams });
     if (createRenderer)
       renderer = createRenderer();
     loaded = true;
