@@ -18,6 +18,7 @@ import SciFiApartment from './Scenes/SciFiApartment.svelte';
 import ShinyCard from './Scenes/ShinyCard.svelte';
 import TiledTexture from './Scenes/TiledTexture.svelte';
 import InfiniteTiledSlideshow from './Scenes/InfiniteTiledSlideshow.svelte';
+import SmoothGrass from './Scenes/SmoothGrass.svelte';
 
 export const DefaultPage = Home;
 
@@ -43,6 +44,7 @@ export const pages = [
   makeScene('SciFi Apartment', 'sciFiApartment', SciFiApartment),
   //makeScene('Tiled Texture', 'tiledTexture', TiledTexture),
   makeScene('Infinite Tiled Sildeshow', 'infiniteTiledSlideshow', InfiniteTiledSlideshow),
+  makeScene('Smooth Grass', 'smoothGrass', SmoothGrass),
 ]
 
 const address = (line1, city, state, zip5, mapLink) => ({ line1, city, state, zip5, mapLink, toString: () => `${line1}, ${city}, ${state}, ${zip5}`});

@@ -67,7 +67,7 @@
     }
 
     const initParams = init({ camera, scene, renderer });
-    if (showControls)
+    if (showControls && createGui)
       gui = createGui({ camera, scene, renderer, ...initParams });
     if (createRenderer)
       renderer = createRenderer();
